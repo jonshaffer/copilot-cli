@@ -327,7 +327,7 @@ type wsAddonManager interface {
 }
 
 type uploader interface {
-	Upload(bucket, key string, data io.Reader) (string, error)
+	Upload(bucket, key string, sse string, data io.Reader) (string, error)
 }
 
 type bucketEmptier interface {

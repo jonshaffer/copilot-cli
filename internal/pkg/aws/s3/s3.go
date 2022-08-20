@@ -59,7 +59,7 @@ func New(s *session.Session) *S3 {
 // ZipAndUpload zips all files and uploads the zipped file to an S3 bucket under the specified key.
 // Per s3's recommendation https://docs.aws.amazon.com/AmazonS3/latest/userguide/about-object-ownership.html:
 // The bucket owner, in addition to the object owner, is granted full control.
-func (s *S3) ZipAndUpload(bucket, key string, files ...NamedBinary) (string, error) {
+func (s *S3) ZipAndUpload(bucket, key string, sse string, files ...NamedBinary) (string, error) {
 	buf := new(bytes.Buffer)
 	w := zip.NewWriter(buf)
 	for _, file := range files {
@@ -75,14 +75,14 @@ func (s *S3) ZipAndUpload(bucket, key string, files ...NamedBinary) (string, err
 	if err := w.Close(); err != nil {
 		return "", err
 	}
-	return s.upload(bucket, key, buf)
+	return s.upload(bucket, key, sse, buf)
 }
 
 // Upload uploads a file to an S3 bucket under the specified key.
 // Per s3's recommendation https://docs.aws.amazon.com/AmazonS3/latest/userguide/about-object-ownership.html:
 // The bucket owner, in addition to the object owner, is granted full control.
-func (s *S3) Upload(bucket, key string, data io.Reader) (string, error) {
-	return s.upload(bucket, key, data)
+func (s *S3) Upload(bucket, key string, sse string, data io.Reader) (string, error) {
+	return s.upload(bucket, key, sse, data)
 }
 
 // EmptyBucket deletes all objects within the bucket.
@@ -209,12 +209,13 @@ func (s *S3) isBucketExists(bucket string) (bool, error) {
 	return true, nil
 }
 
-func (s *S3) upload(bucket, key string, buf io.Reader) (string, error) {
+func (s *S3) upload(bucket, key string, sse string, buf io.Reader) (string, error) {
 	in := &s3manager.UploadInput{
-		Body:   buf,
-		Bucket: aws.String(bucket),
-		Key:    aws.String(key),
-		ACL:    aws.String(s3.ObjectCannedACLBucketOwnerFullControl),
+		Body:                 buf,
+		Bucket:               aws.String(bucket),
+		Key:                  aws.String(key),
+		ACL:                  aws.String(s3.ObjectCannedACLBucketOwnerFullControl),
+		ServerSideEncryption: aws.String(sse),
 	}
 	resp, err := s.s3Manager.Upload(in)
 	if err != nil {

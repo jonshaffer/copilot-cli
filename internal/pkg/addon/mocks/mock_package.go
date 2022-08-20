@@ -35,16 +35,16 @@ func (m *Mockuploader) EXPECT() *MockuploaderMockRecorder {
 }
 
 // Upload mocks base method.
-func (m *Mockuploader) Upload(bucket, key string, data io.Reader) (string, error) {
+func (m *Mockuploader) Upload(bucket, key string, sse string, data io.Reader) (string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Upload", bucket, key, data)
+	ret := m.ctrl.Call(m, "Upload", bucket, key, sse, data)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Upload indicates an expected call of Upload.
-func (mr *MockuploaderMockRecorder) Upload(bucket, key, data interface{}) *gomock.Call {
+func (mr *MockuploaderMockRecorder) Upload(bucket, key, sse, data interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Upload", reflect.TypeOf((*Mockuploader)(nil).Upload), bucket, key, data)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Upload", reflect.TypeOf((*Mockuploader)(nil).Upload), bucket, key, sse, data)
 }
