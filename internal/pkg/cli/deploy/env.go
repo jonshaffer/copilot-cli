@@ -105,8 +105,8 @@ func (d *envDeployer) uploadCustomResources(bucket string) (map[string]string, e
 	if err != nil {
 		return nil, fmt.Errorf("read custom resources for environments: %w", err)
 	}
-	urls, err := customresource.Upload(func(key string, dat io.Reader) (url string, err error) {
-		return d.s3.Upload(bucket, key, dat)
+	urls, err := customresource.Upload(func(key string, sse string, dat io.Reader) (url string, err error) {
+		return d.s3.Upload(bucket, key, sse, dat)
 	}, crs)
 	if err != nil {
 		return nil, fmt.Errorf("upload custom resources to bucket %s: %w", bucket, err)

@@ -119,13 +119,13 @@ func (cf CloudFormation) DeletePipeline(pipeline deploy.Pipeline) error {
 	return cf.cfnClient.DeleteAndWait(stack.NameForPipeline(pipeline.AppName, pipeline.Name, pipeline.IsLegacy))
 }
 
-func (cf CloudFormation) pushTemplateToS3Bucket(bucket string, config StackConfiguration) (string, error) {
+func (cf CloudFormation) pushTemplateToS3Bucket(bucket string, sse string, config StackConfiguration) (string, error) {
 	template, err := config.Template()
 	if err != nil {
 		return "", fmt.Errorf("generate template: %w", err)
 	}
 	reader := strings.NewReader(template)
-	url, err := cf.s3Client.Upload(bucket, fmt.Sprintf(fmtPipelineCfnTemplateName, config.StackName()), reader)
+	url, err := cf.s3Client.Upload(bucket, fmt.Sprintf(fmtPipelineCfnTemplateName, config.StackName()), sse, reader)
 	if err != nil {
 		return "", fmt.Errorf("upload pipeline template to S3 bucket %s: %w", bucket, err)
 	}

@@ -35,12 +35,12 @@ type uploadableStack interface {
 	Template() (string, error)
 }
 
-func (cf CloudFormation) uploadStackTemplateToS3(bucket string, stack uploadableStack) (string, error) {
+func (cf CloudFormation) uploadStackTemplateToS3(bucket string, sse string, stack uploadableStack) (string, error) {
 	tmpl, err := stack.Template()
 	if err != nil {
 		return "", fmt.Errorf("generate template: %w", err)
 	}
-	url, err := cf.s3Client.Upload(bucket, artifactpath.CFNTemplate(stack.StackName(), []byte(tmpl)), strings.NewReader(tmpl))
+	url, err := cf.s3Client.Upload(bucket, artifactpath.CFNTemplate(stack.StackName(), []byte(tmpl)), sse, strings.NewReader(tmpl))
 	if err != nil {
 		return "", err
 	}

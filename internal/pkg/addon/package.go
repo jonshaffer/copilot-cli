@@ -21,7 +21,7 @@ import (
 )
 
 type uploader interface {
-	Upload(bucket, key string, data io.Reader) (string, error)
+	Upload(bucket, key string, sse string, data io.Reader) (string, error)
 }
 
 // packagePropertyConfig defines how to package a particular property in a cloudformation resource.
